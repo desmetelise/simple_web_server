@@ -1,26 +1,21 @@
-const http = require('http'); //http=package
-const server = http.createServer(); //server aanmaken en laten luisteren op poort 3000
-const url = require('url');
+const express = require('express');
+const app = express();
+const PORT = 3000;
 
-function set_response(response, content, status = 200) {
-    response.writeHead(status, { 'Content-Type': 'text/plain' });
-    response.write(content);
-}
-
-server.on('request', (request, response) => {
-    let path = url.parse(request.url).pathname;//url van request meegeven en parsen en pathname geven (alles achter/)
-    console.log(path);
-
-    if (path === '/') {//"": enscape chars herkennen, ==: boolean, ===
-        set_response(response, 'Hello World');
-    } else if (path === '/about') {
-        set_response(response, 'Made by VIVES students. ;)');
-    } else {
-        set_response(response, 'Error', 400);
-    }
-    response.end(); //connectie afsluiten
+//Basic routes
+app.get('/', (request, response) => {
+    response.send('Hello World');
 });
 
-server.listen(3000, () => {
-    console.log('Node server created at port 3000');
+app.get('/about', (request, response) => {
+    response.send('This app was made by VIVES peoples');
 });
+
+//Express error handling middleware
+app.use((request, response) => {
+    response.type('text/plain');
+    response.status(505);
+    response.send('Error page');
+});
+
+app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`))//backticks zorgen dat je placeholders kunt gebruiken
